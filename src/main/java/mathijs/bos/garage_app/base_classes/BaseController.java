@@ -10,6 +10,10 @@ public abstract class BaseController<T> {
 
     private BaseService<T> service;
 
+    public BaseController(BaseService<T> service) {
+        this.service = service;
+    }
+
     @GetMapping
     public ResponseEntity<List<T>> findAll() {
         List<T> entities = service.findAll();

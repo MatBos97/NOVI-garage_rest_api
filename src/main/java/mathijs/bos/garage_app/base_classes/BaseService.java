@@ -8,6 +8,10 @@ public abstract class BaseService<T> {
 
     private BaseRepository<T> repository;
 
+    public BaseService(BaseRepository<T> repository) {
+        this.repository = repository;
+    }
+
     public List<T> findAll() {
         return repository.findAll();
     }
