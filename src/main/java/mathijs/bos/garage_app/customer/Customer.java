@@ -1,6 +1,10 @@
 package mathijs.bos.garage_app.customer;
 
 import jakarta.persistence.*;
+import mathijs.bos.garage_app.car.Car;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "customer")
@@ -15,6 +19,17 @@ public class Customer {
 
     @Column(name = "phone", nullable = false, unique = true, length = 30)
     private String phone;
+
+    @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Car> cars = new ArrayList<>();
+
+    public List<Car> getCars() {
+        return cars;
+    }
+
+    public void setCars(List<Car> cars) {
+        this.cars = cars;
+    }
 
     public String getPhone() {
         return phone;

@@ -1,6 +1,7 @@
 package mathijs.bos.garage_app.issue;
 
 import jakarta.persistence.*;
+import mathijs.bos.garage_app.service_record.ServiceRecord;
 
 @Entity
 @Table(name = "issue")
@@ -15,6 +16,18 @@ public class Issue {
 
     @Column(name = "fix_agreement", nullable = false)
     private Boolean fixAgreement = false;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "service_record_id", nullable = false)
+    private ServiceRecord serviceRecord;
+
+    public ServiceRecord getServiceRecord() {
+        return serviceRecord;
+    }
+
+    public void setServiceRecord(ServiceRecord serviceRecord) {
+        this.serviceRecord = serviceRecord;
+    }
 
     public Boolean getFixAgreement() {
         return fixAgreement;

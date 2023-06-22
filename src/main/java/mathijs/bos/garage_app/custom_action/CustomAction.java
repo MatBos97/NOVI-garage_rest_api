@@ -1,6 +1,7 @@
 package mathijs.bos.garage_app.custom_action;
 
 import jakarta.persistence.*;
+import mathijs.bos.garage_app.service_record.ServiceRecord;
 
 import java.util.Currency;
 
@@ -17,6 +18,18 @@ public class CustomAction {
 
     @Column(name = "price", nullable = false)
     private Currency price;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "service_record_id", nullable = false)
+    private ServiceRecord serviceRecord;
+
+    public ServiceRecord getServiceRecord() {
+        return serviceRecord;
+    }
+
+    public void setServiceRecord(ServiceRecord serviceRecord) {
+        this.serviceRecord = serviceRecord;
+    }
 
     public Currency getPrice() {
         return price;
