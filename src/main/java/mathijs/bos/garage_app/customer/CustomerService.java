@@ -10,7 +10,7 @@ public class CustomerService extends BaseService<Customer> {
 
 
     @Autowired
-    public CustomerService(BaseRepository<Customer> repository) {
+    public CustomerService(CustomerRepository repository) {
         super(repository);
     }
 }
