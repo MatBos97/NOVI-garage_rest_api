@@ -1,4 +1,5 @@
 package mathijs.bos.garage_app.base_classes;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -18,20 +19,24 @@ public abstract class BaseService<T> {
 
     public T findById(Long id) {
         Optional<T> optionalEntity = repository.findById(id);
-        return optionalEntity.orElse(null);
+        if(optionalEntity.isPresent()) {
+            return optionalEntity.get();
+        }
+        else {
+            throw new EntityNotFoundException("Entity not found with id: " + id);
+        }
     }
 
     public T create(T entity) {
         return repository.save(entity);
     }
 
-    public boolean delete(Long id) {
+    public void delete(Long id) {
         Optional<T> optionalEntity = repository.findById(id);
         if (optionalEntity.isPresent()) {
             repository.delete(optionalEntity.get());
-            return true;
         } else {
-            return false;
+            throw new EntityNotFoundException("Entity not found with id: " + id);
         }
     }
 }
