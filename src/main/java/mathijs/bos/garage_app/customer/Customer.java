@@ -23,6 +23,15 @@ public class Customer {
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Car> cars = new ArrayList<>();
 
+    public Customer() {
+    }
+
+    public Customer(Long id, String name, String phone) {
+        this.id = id;
+        this.name = name;
+        this.phone = phone;
+    }
+
     public List<Car> getCars() {
         return cars;
     }
