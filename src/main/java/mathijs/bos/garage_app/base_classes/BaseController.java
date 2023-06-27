@@ -1,5 +1,5 @@
 package mathijs.bos.garage_app.base_classes;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +22,10 @@ public abstract class BaseController<T> {
 
     @GetMapping("/{id}")
     public ResponseEntity<T> findById(@PathVariable Long id) {
-        T entity = service.findById(id);
-        if (entity != null) {
+        try {
+            T entity = service.findById(id);
             return ResponseEntity.ok(entity);
-        } else {
+        } catch (EntityNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
     }
@@ -38,11 +38,12 @@ public abstract class BaseController<T> {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        boolean deleted = service.delete(id);
-        if (deleted) {
+        try {
+            service.delete(id);
             return ResponseEntity.noContent().build();
-        } else {
+        } catch (EntityNotFoundException ex) {
             return ResponseEntity.notFound().build();
         }
     }
 }
+

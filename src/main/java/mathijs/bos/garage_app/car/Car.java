@@ -17,7 +17,7 @@ public class Car {
 
     @Lob
     @Column(name = "car_papers")
-    private Byte[] carPapers;
+    private byte[] carPapers;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
@@ -42,11 +42,11 @@ public class Car {
         this.customer = customer;
     }
 
-    public Byte[] getCarPapers() {
+    public byte[] getCarPapers() {
         return carPapers;
     }
 
-    public void setCarPapers(Byte[] carPapers) {
+    public void setCarPapers(byte[] carPapers) {
         this.carPapers = carPapers;
     }
 
