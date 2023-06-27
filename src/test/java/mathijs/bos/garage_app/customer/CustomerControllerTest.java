@@ -49,4 +49,21 @@ class CustomerControllerTest {
         verify(serviceMock, times(1)).findAll();
         verifyNoMoreInteractions(serviceMock);
     }
+
+    @Test
+    public void CreateNewCustomer(){
+        //Arrange
+        Customer customer = new Customer(1L, "Mathijs", "06123456789");
+        when(serviceMock.create(customer)).thenReturn(customer);
+
+        //Act
+        ResponseEntity<Customer> response = controller.create(customer);
+
+        //Assert
+        assertNotNull(response);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertEquals(customer, response.getBody());
+        verify(serviceMock, times(1)).create(customer);
+        verifyNoMoreInteractions(serviceMock);
+    }
 }
