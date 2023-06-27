@@ -31,7 +31,7 @@ class CustomerControllerTest {
 
 
     @Test
-    public void CreateNewCustomer(){
+    public void FindAllCustomers(){
         //Arrange
         List<Customer> entities = new ArrayList<>();
         entities.add(new Customer(1L, "Mathijs", "1234"));
