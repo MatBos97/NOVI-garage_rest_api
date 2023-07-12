@@ -92,15 +92,16 @@ class CustomerServiceTest {
         // Arrange
         Customer newCustomer = new Customer(1L, "A", "321");
         when(repository.findById(1L)).thenReturn(Optional.of(customer));
+        when(repository.save(customer)).thenReturn(customer);
 
         // Act
         Customer updatedCustomer = service.update(1L, newCustomer);
 
         // Assert
         assertNotNull(updatedCustomer);
-        assertEquals(newCustomer.getName(), customer.getName());
-        assertEquals(newCustomer.getPhone(), "321");
-        assertNotEquals(newCustomer.getPhone(), customer.getPhone());
+        assertEquals(customer.getId(), newCustomer.getId());
+        assertEquals(customer.getName(), newCustomer.getName());
+        assertEquals(customer.getPhone(), newCustomer.getPhone());
         verify(repository, times(1)).findById(1L);
         verify(repository, times(1)).save(customer);
     }
