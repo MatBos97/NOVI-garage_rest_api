@@ -1,7 +1,6 @@
 package mathijs.bos.garage_app.action;
 
-import mathijs.bos.garage_app.base_classes.BaseRepository;
-import org.springframework.data.jpa.repository.JpaRepository;
+import mathijs.bos.garage_app.base_classes.BaseRepo;
 
-public interface ActionRepository extends BaseRepository<Action> {
+public interface ActionRepository extends BaseRepo<Action, Long> {
 }

@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,10 +56,11 @@ class CustomerServiceTest {
         when(repository.findById(id)).thenReturn(Optional.of(customer));
 
         //Act
-        Customer response = service.findById(id);
+        Optional<Customer> optionalCustomer = service.findById(id);
 
         //Assert
-        assertEquals(customer, response);
+        assertTrue(optionalCustomer.isPresent());
+        assertEquals(customer, optionalCustomer.get());
         verify(repository, times(1)).findById(id);
     }
 
@@ -88,6 +88,24 @@ class CustomerServiceTest {
     }
 
     @Test
+    public void UpdateCustomer() throws IllegalAccessException {
+        // Arrange
+        Customer newCustomer = new Customer(1L, "A", "321");
+        when(repository.findById(1L)).thenReturn(Optional.of(customer));
+
+        // Act
+        Customer updatedCustomer = service.update(1L, newCustomer);
+
+        // Assert
+        assertNotNull(updatedCustomer);
+        assertEquals(newCustomer.getName(), customer.getName());
+        assertEquals(newCustomer.getPhone(), "321");
+        assertNotEquals(newCustomer.getPhone(), customer.getPhone());
+        verify(repository, times(1)).findById(1L);
+        verify(repository, times(1)).save(customer);
+    }
+
+    @Test
     public void DeleteCustomer(){
         //Arrange
         when(repository.findById(customer.getId())).thenReturn(Optional.of(customer));
@@ -101,7 +119,7 @@ class CustomerServiceTest {
     }
 
     @Test
-    public void DeleteUnkownCustomer(){
+    public void DeleteUnknownCustomer(){
         //Arrange
         when(repository.findById(customer.getId())).thenReturn(Optional.empty());
 
