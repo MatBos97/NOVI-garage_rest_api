@@ -67,12 +67,14 @@ class CustomerServiceTest {
     @Test
     public void CannotFindById(){
         //Arrange
-        Long id = 1L;
-        when(repository.findById(id)).thenReturn(Optional.empty());
+        when(service.findById(anyLong())).thenReturn(Optional.empty());
 
-        //Act & Assert
-        assertThrows(EntityNotFoundException.class, () -> service.findById(id));
-        verify(repository, times(1)).findById(id);
+        //Act
+        Optional<Customer> optional = service.findById(1L);
+
+        //Assert
+        assertTrue(optional.isEmpty());
+        verify(repository, times(1)).findById(1L);
     }
 
     @Test
@@ -109,7 +111,7 @@ class CustomerServiceTest {
     @Test
     public void DeleteCustomer(){
         //Arrange
-        when(repository.findById(customer.getId())).thenReturn(Optional.of(customer));
+        when(repository.findById(1L)).thenReturn(Optional.of(customer));
 
         //Act
         service.delete(1L);
@@ -122,7 +124,7 @@ class CustomerServiceTest {
     @Test
     public void DeleteUnknownCustomer(){
         //Arrange
-        when(repository.findById(customer.getId())).thenReturn(Optional.empty());
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         //Act and Assert
         assertThrows(EntityNotFoundException.class, () -> service.delete(1L));

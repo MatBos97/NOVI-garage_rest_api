@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/issue")
-public class IssueController extends BaseController<Issue> {
+public class IssueController extends BaseController<Issue, Long, IssueService> {
 
     @Autowired
     public IssueController(IssueService service) {

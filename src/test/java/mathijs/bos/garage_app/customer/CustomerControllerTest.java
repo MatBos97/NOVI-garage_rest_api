@@ -1,6 +1,5 @@
 package mathijs.bos.garage_app.customer;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,7 +75,7 @@ class CustomerControllerTest {
     @Test
     public void NotFoundById(){
         //Arrange
-        when(serviceMock.findById(1L)).thenThrow(EntityNotFoundException.class);
+        when(serviceMock.findById(anyLong())).thenReturn(Optional.empty());
 
         //Act
         ResponseEntity<?> response = controller.findById(1L);
