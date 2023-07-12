@@ -117,17 +117,14 @@ class CustomerControllerTest {
     }
 
     @Test
-    public void UpdateNonExistingCustomer(){
-//        //Arrange
-//        Customer updatedCustomer = new Customer(1L, "John", "1234");
-//        when(serviceMock.update(eq(1L), any(Customer.class)))
-//                .thenReturn(Optional.empty());
-//
-//        // Act
-//        ResponseEntity<?> response = controller.update(1L, updatedCustomer);
-//
-//        // Assert
-//        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-//        assertEquals("Customer not found.", response.getBody());
+    public void UpdateNonExistingCustomer() throws IllegalAccessException {
+        //  Arrange
+        Customer newCustomer = new Customer(1L, "B", "321");
+        when(serviceMock.update(anyLong(), any(Customer.class))).thenThrow(IllegalAccessException.class);
+
+        // Act
+        ResponseEntity<Customer> response = controller.update(1L, newCustomer);
+
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }
