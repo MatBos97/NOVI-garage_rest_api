@@ -8,7 +8,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -57,22 +56,25 @@ class CustomerServiceTest {
         when(repository.findById(id)).thenReturn(Optional.of(customer));
 
         //Act
-        Customer response = service.findById(id);
+        Optional<Customer> optionalCustomer = service.findById(id);
 
         //Assert
-        assertEquals(customer, response);
+        assertTrue(optionalCustomer.isPresent());
+        assertEquals(customer, optionalCustomer.get());
         verify(repository, times(1)).findById(id);
     }
 
     @Test
     public void CannotFindById(){
         //Arrange
-        Long id = 1L;
-        when(repository.findById(id)).thenReturn(Optional.empty());
+        when(service.findById(anyLong())).thenReturn(Optional.empty());
 
-        //Act & Assert
-        assertThrows(EntityNotFoundException.class, () -> service.findById(id));
-        verify(repository, times(1)).findById(id);
+        //Act
+        Optional<Customer> optional = service.findById(1L);
+
+        //Assert
+        assertTrue(optional.isEmpty());
+        verify(repository, times(1)).findById(1L);
     }
 
     @Test
@@ -88,9 +90,28 @@ class CustomerServiceTest {
     }
 
     @Test
+    public void UpdateCustomer() throws IllegalAccessException {
+        // Arrange
+        Customer newCustomer = new Customer(1L, "A", "321");
+        when(repository.findById(1L)).thenReturn(Optional.of(customer));
+        when(repository.save(customer)).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+
+        // Act
+        Customer updatedCustomer = service.update(1L, newCustomer);
+
+        // Assert
+        assertNotNull(updatedCustomer);
+        assertEquals(customer.getId(), newCustomer.getId());
+        assertEquals(customer.getName(), newCustomer.getName());
+        assertEquals(customer.getPhone(), newCustomer.getPhone());
+        verify(repository, times(1)).findById(1L);
+        verify(repository, times(1)).save(customer);
+    }
+
+    @Test
     public void DeleteCustomer(){
         //Arrange
-        when(repository.findById(customer.getId())).thenReturn(Optional.of(customer));
+        when(repository.findById(1L)).thenReturn(Optional.of(customer));
 
         //Act
         service.delete(1L);
@@ -101,9 +122,9 @@ class CustomerServiceTest {
     }
 
     @Test
-    public void DeleteUnkownCustomer(){
+    public void DeleteUnknownCustomer(){
         //Arrange
-        when(repository.findById(customer.getId())).thenReturn(Optional.empty());
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         //Act and Assert
         assertThrows(EntityNotFoundException.class, () -> service.delete(1L));

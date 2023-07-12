@@ -1,42 +1,61 @@
 package mathijs.bos.garage_app.base_classes;
-import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Optional;
 
-public abstract class BaseService<T> {
 
-    private BaseRepository<T> repository;
+public abstract class BaseService<T, ID, R extends JpaRepository<T, ID>> {
 
-    public BaseService(BaseRepository<T> repository) {
+    protected final R repository;
+
+    public BaseService(R repository){
         this.repository = repository;
     }
 
-    public List<T> findAll() {
+    public List<T> findAll(){
         return repository.findAll();
     }
 
-    public T findById(Long id) {
-        Optional<T> optionalEntity = repository.findById(id);
-        if(optionalEntity.isPresent()) {
-            return optionalEntity.get();
-        }
-        else {
-            throw new EntityNotFoundException("Entity not found with id: " + id);
-        }
+    public Optional<T> findById(ID id){
+        return repository.findById(id);
     }
 
-    public T create(T entity) {
+    @Transactional
+    public T create(T entity){
         return repository.save(entity);
     }
 
-    public void delete(Long id) {
-        Optional<T> optionalEntity = repository.findById(id);
-        if (optionalEntity.isPresent()) {
-            repository.delete(optionalEntity.get());
-        } else {
-            throw new EntityNotFoundException("Entity not found with id: " + id);
+    @Transactional
+    public T update(ID id, T newEntity) throws EntityNotFoundException, IllegalAccessException {
+        T entity = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Did not find entity with id: " + id));
+
+
+        Class<?> c = entity.getClass();
+
+        for(Field field : c.getDeclaredFields()){
+            field.setAccessible(true);
+            Object newValue = field.get(newEntity);
+
+            if(newValue != null){
+                field.set(entity, newValue);
+            }
         }
+
+        return repository.save(entity);
+    }
+
+    @Transactional
+    public void delete(ID id){
+        Optional<T> entity = repository.findById(id);
+        if (entity.isEmpty()){
+            throw new EntityNotFoundException("Did not find entity with id: " + id);
+        }
+
+        repository.delete(entity.get());
     }
 }

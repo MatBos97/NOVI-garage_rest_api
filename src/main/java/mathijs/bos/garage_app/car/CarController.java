@@ -1,7 +1,6 @@
 package mathijs.bos.garage_app.car;
 
 import mathijs.bos.garage_app.base_classes.BaseController;
-import mathijs.bos.garage_app.base_classes.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/car")
-public class CarController extends BaseController<Car> {
+public class CarController extends BaseController<Car, Long, CarService> {
 
     private final CarService carService;
 
@@ -26,7 +25,7 @@ public class CarController extends BaseController<Car> {
     public ResponseEntity<String> uploadCarPapers(@PathVariable Long carId, @RequestParam("file")MultipartFile file){
         try{
             carService.saveCarPapers(carId, file);
-            return ResponseEntity.ok("Car papers uplaoded successfully.");
+            return ResponseEntity.ok("Car papers uploaded successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload car papers.");
         }

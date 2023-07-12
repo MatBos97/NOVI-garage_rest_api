@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PartService extends BaseService<Part> {
+public class PartService extends BaseService<Part, Long, PartRepository> {
 
     @Autowired
     public PartService(PartRepository repository) {

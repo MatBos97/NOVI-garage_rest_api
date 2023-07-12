@@ -1,6 +1,5 @@
 package mathijs.bos.garage_app.customer;
 
-import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -25,10 +25,13 @@ class CustomerControllerTest {
     @InjectMocks
     private CustomerController controller;
 
+    private Customer customer;
+
 
     @BeforeEach
     void setUp() {
         controller = new CustomerController(serviceMock);
+        this.customer = new Customer(1L, "A", "123");
     }
 
 
@@ -56,7 +59,7 @@ class CustomerControllerTest {
     public void FindById(){
         //Arrange
         Customer customer = new Customer(1L, "A", "1234567890");
-        when(serviceMock.findById(1L)).thenReturn(customer);
+        when(serviceMock.findById(1L)).thenReturn(Optional.of(customer));
 
         //Act
         ResponseEntity<Customer> response = controller.findById(1L);
@@ -72,7 +75,7 @@ class CustomerControllerTest {
     @Test
     public void NotFoundById(){
         //Arrange
-        when(serviceMock.findById(1L)).thenThrow(EntityNotFoundException.class);
+        when(serviceMock.findById(anyLong())).thenReturn(Optional.empty());
 
         //Act
         ResponseEntity<?> response = controller.findById(1L);
@@ -99,32 +102,28 @@ class CustomerControllerTest {
     }
 
     @Test
-    public void UpdateCustomer(){
+    public void UpdateCustomer() throws IllegalAccessException {
         // Arrange
-        Customer updatedCustomer = new Customer(1L, "John", "1234");
-        when(serviceMock.update(eq(1L), any(Customer.class)))
-                .thenReturn(Optional.of(updatedCustomer));
+        Customer newCustomer = new Customer(1L, "B", "321");
+        when(serviceMock.update(anyLong(), any(Customer.class))).thenReturn(newCustomer);
 
         // Act
-        ResponseEntity<?> response = controller.update(1L, updatedCustomer);
+        ResponseEntity<Customer> response = controller.update(customer.getId(), customer);
 
         // Assert
+        assertEquals(newCustomer, response.getBody());
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(updatedCustomer, response.getBody());
     }
 
     @Test
-    public void UpdateNonExistingCustomer(){
-        //Arrange
-        Customer updatedCustomer = new Customer(1L, "John", "1234");
-        when(serviceMock.update(eq(1L), any(Customer.class)))
-                .thenReturn(Optional.empty());
+    public void UpdateNonExistingCustomer() throws IllegalAccessException {
+        //  Arrange
+        Customer newCustomer = new Customer(1L, "B", "321");
+        when(serviceMock.update(anyLong(), any(Customer.class))).thenThrow(IllegalAccessException.class);
 
         // Act
-        ResponseEntity<?> response = controller.update(1L, updatedCustomer);
+        ResponseEntity<Customer> response = controller.update(1L, newCustomer);
 
-        // Assert
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        assertEquals("Customer not found.", response.getBody());
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 }

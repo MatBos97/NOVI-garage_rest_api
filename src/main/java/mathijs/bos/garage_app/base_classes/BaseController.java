@@ -1,49 +1,53 @@
 package mathijs.bos.garage_app.base_classes;
-import jakarta.persistence.EntityNotFoundException;
+
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-public abstract class BaseController<T> {
+public class BaseController<T, ID, S extends BaseService<T, ID, ? extends JpaRepository<T, ID>>> {
 
-    private BaseService<T> service;
+    protected final S service;
 
-    public BaseController(BaseService<T> service) {
+    public BaseController(S service){
         this.service = service;
     }
 
-    @GetMapping
-    public ResponseEntity<List<T>> findAll() {
-        List<T> entities = service.findAll();
-        return ResponseEntity.ok(entities);
+    @GetMapping("/all")
+    public ResponseEntity<List<T>> findAll(){
+        List<T> all = service.findAll();
+        return ResponseEntity.ok(all);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<T> findById(@PathVariable Long id) {
-        try {
-            T entity = service.findById(id);
-            return ResponseEntity.ok(entity);
-        } catch (EntityNotFoundException ex) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<T> findById(@PathVariable ID id){
+        return service.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<T> create(@RequestBody T entity) {
+    public ResponseEntity<T> create(@RequestBody T entity){
         T createdEntity = service.create(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdEntity);
+        return new ResponseEntity<>(createdEntity, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<T> update(@PathVariable ID id, @RequestBody T newEntity){
+        try {
+            T updatedEntity = service.update(id, newEntity);
+            return ResponseEntity.ok(updatedEntity);
+        } catch (IllegalAccessException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        try {
-            service.delete(id);
-            return ResponseEntity.noContent().build();
-        } catch (EntityNotFoundException ex) {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> delete(@PathVariable ID id){
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
-}
 
+}
