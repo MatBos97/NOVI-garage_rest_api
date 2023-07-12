@@ -92,7 +92,7 @@ class CustomerServiceTest {
         // Arrange
         Customer newCustomer = new Customer(1L, "A", "321");
         when(repository.findById(1L)).thenReturn(Optional.of(customer));
-        when(repository.save(customer)).thenReturn(customer);
+        when(repository.save(customer)).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         // Act
         Customer updatedCustomer = service.update(1L, newCustomer);
