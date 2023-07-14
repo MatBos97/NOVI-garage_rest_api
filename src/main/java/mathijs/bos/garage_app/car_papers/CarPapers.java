@@ -1,11 +1,13 @@
 package mathijs.bos.garage_app.car_papers;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import mathijs.bos.garage_app.base_classes.BaseEntity;
 import mathijs.bos.garage_app.car.Car;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
