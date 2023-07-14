@@ -18,7 +18,7 @@ public class Issue extends BaseEntity {
     @Column(name = "fix_agreement", nullable = false)
     private Boolean fixAgreement = false;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "service_record_id", nullable = false)
     private ServiceRecord serviceRecord;
 

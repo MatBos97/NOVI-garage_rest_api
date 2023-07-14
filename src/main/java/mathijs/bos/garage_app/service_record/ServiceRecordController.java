@@ -2,6 +2,7 @@ package mathijs.bos.garage_app.service_record;
 
 import mathijs.bos.garage_app.base_classes.BaseController;
 import mathijs.bos.garage_app.customer.Customer;
+import mathijs.bos.garage_app.issue.Issue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,19 @@ public class ServiceRecordController extends BaseController<ServiceRecord, Long,
         return ResponseEntity.ok(readyForPickup);
     }
 
-    @PatchMapping("/plan_inspection/{id}")
+    @GetMapping("/{id}/customer_details")
+    public ResponseEntity<Customer> getCustomerDetails(@PathVariable Long id){
+        Customer customer = service.getCustomerDetails(id);
+        return ResponseEntity.ok(customer);
+    }
+
+    @GetMapping("/{id}/issues_to_fix")
+    public ResponseEntity<List<Issue>> getIssuesToFix(@PathVariable Long id) {
+        List<Issue> issuesToFix = service.getIssuesToFix(id);
+        return ResponseEntity.ok(issuesToFix);
+    }
+
+    @PatchMapping("/{id}/plan_inspection")
     public ResponseEntity<ServiceRecord> planInspection(@PathVariable Long id, @RequestBody LocalDateTime dateTime){
         try {
             ServiceRecord serviceRecord = service.planInspection(id, dateTime);
@@ -37,10 +50,20 @@ public class ServiceRecordController extends BaseController<ServiceRecord, Long,
         }
     }
 
-    @PatchMapping("/plan_repair/{id}")
+    @PatchMapping("/{id}/plan_repair")
     public ResponseEntity<ServiceRecord> planRepair(@PathVariable Long id, @RequestBody LocalDateTime dateTime) {
         try {
             ServiceRecord serviceRecord = service.planRepair(id, dateTime);
+            return ResponseEntity.ok(serviceRecord);
+        } catch (ServiceRecordNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PatchMapping("/{id}/change_status")
+    public ResponseEntity<ServiceRecord> changeStatus(@PathVariable Long id, @RequestBody Status status){
+        try {
+            ServiceRecord serviceRecord = service.changeStatus(id, status);
             return ResponseEntity.ok(serviceRecord);
         } catch (ServiceRecordNotFoundException e) {
             return ResponseEntity.notFound().build();
