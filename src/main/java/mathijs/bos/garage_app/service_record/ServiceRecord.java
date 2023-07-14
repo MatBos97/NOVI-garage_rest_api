@@ -27,8 +27,8 @@ public class ServiceRecord {
     @Column(name = "repair")
     private LocalDateTime repair;
 
-    @Enumerated
-    @Column(name = "status", nullable = false, columnDefinition = "ENUM('WAITING', 'INSPECTION', 'REPAIR', 'READY_FOR_PICK_UP', 'DONE')")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
     private Status status;
 
     @Lob

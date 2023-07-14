@@ -34,7 +34,6 @@ public abstract class BaseService<T, ID, R extends JpaRepository<T, ID>> {
     public T update(ID id, T newEntity) throws EntityNotFoundException, IllegalAccessException {
         T entity = repository.findById(id).orElseThrow(() -> new EntityNotFoundException("Did not find entity with id: " + id));
 
-
         Class<?> c = entity.getClass();
 
         for(Field field : c.getDeclaredFields()){

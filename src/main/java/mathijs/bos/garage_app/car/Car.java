@@ -1,6 +1,7 @@
 package mathijs.bos.garage_app.car;
 
 import jakarta.persistence.*;
+import mathijs.bos.garage_app.car_papers.CarPapers;
 import mathijs.bos.garage_app.customer.Customer;
 import mathijs.bos.garage_app.service_record.ServiceRecord;
 
@@ -15,16 +16,23 @@ public class Car {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Lob
-    @Column(name = "car_papers")
-    private byte[] carPapers;
-
     @ManyToOne(optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;
 
     @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ServiceRecord> serviceRecords = new ArrayList<>();
+
+    @OneToMany(mappedBy = "car", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CarPapers> carPapers = new ArrayList<>();
+
+    public List<CarPapers> getCarPapers() {
+        return carPapers;
+    }
+
+    public void setCarPapers(List<CarPapers> carPapers) {
+        this.carPapers = carPapers;
+    }
 
     public List<ServiceRecord> getServiceRecords() {
         return serviceRecords;
@@ -40,14 +48,6 @@ public class Car {
 
     public void setCustomer(Customer customer) {
         this.customer = customer;
-    }
-
-    public byte[] getCarPapers() {
-        return carPapers;
-    }
-
-    public void setCarPapers(byte[] carPapers) {
-        this.carPapers = carPapers;
     }
 
     public Long getId() {
