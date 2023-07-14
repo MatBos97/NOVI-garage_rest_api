@@ -31,4 +31,6 @@ public class ServiceRecordService extends BaseService<ServiceRecord, Long, Servi
                     return repository.save(serviceRecord);
                 }).orElseThrow(() -> new ServiceRecordNotFoundException(id));
     }
+
+
 }
