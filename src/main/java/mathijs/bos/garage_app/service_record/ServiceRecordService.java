@@ -1,10 +1,13 @@
 package mathijs.bos.garage_app.service_record;
 
 import mathijs.bos.garage_app.base_classes.BaseService;
+import mathijs.bos.garage_app.car.Car;
+import mathijs.bos.garage_app.customer.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class ServiceRecordService extends BaseService<ServiceRecord, Long, ServiceRecordRepository> {
@@ -32,5 +35,14 @@ public class ServiceRecordService extends BaseService<ServiceRecord, Long, Servi
                 }).orElseThrow(() -> new ServiceRecordNotFoundException(id));
     }
 
+    public List<Customer> getCustomersWithCarsReadyForPickup(){
+        List<Car> carsReadyForPickup = repository.findByStatus(Status.READY_FOR_PICK_UP).stream()
+                .map(ServiceRecord::getCar)
+                .toList();
+
+        return carsReadyForPickup.stream()
+                .map(Car::getCustomer)
+                .toList();
+    }
 
 }
