@@ -27,9 +27,9 @@ public class ServiceRecord {
     @Column(name = "repair")
     private LocalDateTime repair;
 
-    @Enumerated
-    @Column(name = "status", nullable = false, columnDefinition = "ENUM('WAITING', 'INSPECTION', 'REPAIR', 'READY_FOR_PICK_UP', 'DONE')")
-    private Status status;
+//    @Enumerated
+//    @Column(name = "status", nullable = false, columnDefinition = "ENUM('WAITING', 'INSPECTION', 'REPAIR', 'READY_FOR_PICK_UP', 'DONE')")
+//    private Status status;
 
     @Lob
     @Column(name = "receipt")
@@ -132,13 +132,13 @@ public class ServiceRecord {
         this.inspection = inspection;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status){
-        this.status = status;
-    }
+//    public Status getStatus() {
+//        return status;
+//    }
+//
+//    public void setStatus(Status status){
+//        this.status = status;
+//    }
 
     public Long getId() {
         return id;

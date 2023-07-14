@@ -19,7 +19,7 @@ public class ServiceRecordController extends BaseController<ServiceRecord, Long,
         this.service = service;
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/plan_inspection/{id}")
     public ResponseEntity<ServiceRecord> planInspection(@PathVariable Long id, @RequestBody LocalDateTime dateTime){
         try {
             ServiceRecord serviceRecord = service.planInspection(id, dateTime);
@@ -29,7 +29,7 @@ public class ServiceRecordController extends BaseController<ServiceRecord, Long,
         }
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/plan_repair/{id}")
     public ResponseEntity<ServiceRecord> planRepair(@PathVariable Long id, @RequestBody LocalDateTime dateTime) {
         try {
             ServiceRecord serviceRecord = service.planRepair(id, dateTime);
