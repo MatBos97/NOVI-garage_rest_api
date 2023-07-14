@@ -1,8 +1,7 @@
 package mathijs.bos.garage_app.car;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import mathijs.bos.garage_app.base_classes.BaseEntity;
 import mathijs.bos.garage_app.car_papers.CarPapers;
 import mathijs.bos.garage_app.customer.Customer;
@@ -11,6 +10,9 @@ import mathijs.bos.garage_app.service_record.ServiceRecord;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 @Entity
