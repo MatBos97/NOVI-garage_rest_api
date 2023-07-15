@@ -1,24 +1,15 @@
 package mathijs.bos.garage_app.action;
 
-import jakarta.persistence.EntityNotFoundException;
 import mathijs.bos.garage_app.base_classes.BaseMapper;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Component
 public class ActionMapper implements BaseMapper<Action, ActionDTO> {
 
-    private final ActionRepository actionRepository;
-
-    public ActionMapper(ActionRepository actionRepository) {
-        this.actionRepository = actionRepository;
-    }
 
     @Override
     public Action toEntity(ActionDTO dto) {
-        return actionRepository.findById(dto.getId())
-                .orElseThrow(() -> new EntityNotFoundException("No action with id:" + dto.getId() + " was found."));
+        return new Action(dto.getName(), dto.getPrice());
     }
 
     @Override
