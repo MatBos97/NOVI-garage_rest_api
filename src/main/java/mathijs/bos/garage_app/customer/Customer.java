@@ -17,6 +17,12 @@ import java.util.List;
 @Table(name = "customer")
 public class Customer extends BaseEntity {
 
+    public Customer(Long id, String name, String phone) {
+        this.setId(id);
+        this.name = name;
+        this.phone = phone;
+    }
+
     @Column(name = "name", nullable = false, unique = true)
     private String name;
 
@@ -25,11 +31,5 @@ public class Customer extends BaseEntity {
 
     @OneToMany(mappedBy = "customer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Car> cars = new ArrayList<>();
-
-    public Customer(Long id, String name, String phone) {
-        this.setId(id);
-        this.name = name;
-        this.phone = phone;
-    }
 
 }

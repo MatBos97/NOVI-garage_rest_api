@@ -14,6 +14,14 @@ import mathijs.bos.garage_app.car.Car;
 @Table(name = "car_papers")
 public class CarPapers extends BaseEntity {
 
+    public CarPapers(Long id, String fileName, String fileType, Byte[] fileData, Long fileSize) {
+        this.setId(id);
+        this.fileName = fileName;
+        this.fileType = fileType;
+        this.fileData = fileData;
+        this.fileSize = fileSize;
+    }
+
     @Column(name = "file_name", nullable = false)
     private String fileName;
 
@@ -30,5 +38,4 @@ public class CarPapers extends BaseEntity {
     @ManyToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "car_id", nullable = false)
     private Car car;
-
 }
