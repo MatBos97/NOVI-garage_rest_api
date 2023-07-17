@@ -1,46 +1,50 @@
 package mathijs.bos.garage_app.base_classes;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.HttpStatus;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class BaseController<T, ID, S extends BaseService<T, ID, ? extends JpaRepository<T, ID>>> {
+public class BaseController<E, D extends BaseDTO, ID extends Serializable> {
 
-    protected final S service;
+    protected final BaseService<E, D, ID> service;
 
-    public BaseController(S service){
+    public BaseController(BaseService<E, D, ID> service){
         this.service = service;
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<T>> findAll(){
-        List<T> all = service.findAll();
+    public ResponseEntity<List<E>> findAll(){
+        List<E> all = service.findAll();
         return ResponseEntity.ok(all);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<T> findById(@PathVariable ID id){
+    public ResponseEntity<E> findById(@PathVariable ID id){
         return service.findById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<T> create(@RequestBody T entity){
-        T createdEntity = service.create(entity);
-        return new ResponseEntity<>(createdEntity, HttpStatus.CREATED);
+    public ResponseEntity<E> create(@RequestBody D dto){
+        try {
+            E entity = service.create(dto);
+            return ResponseEntity.ok(entity);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<T> update(@PathVariable ID id, @RequestBody T newEntity){
+    public ResponseEntity<E> update(@PathVariable ID id, @RequestBody D dto){
         try {
-            T updatedEntity = service.update(id, newEntity);
+            E updatedEntity = service.update(id, dto);
             return ResponseEntity.ok(updatedEntity);
-        } catch (IllegalAccessException e) {
-            return ResponseEntity.internalServerError().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 
