@@ -19,6 +19,10 @@ import java.util.List;
 @Table(name = "car")
 public class Car extends BaseEntity {
 
+    public Car(Long id) {
+        this.setId(id);
+    }
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "customer_id", nullable = false)
     private Customer customer;

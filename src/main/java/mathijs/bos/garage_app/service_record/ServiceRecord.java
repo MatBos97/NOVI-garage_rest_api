@@ -2,6 +2,7 @@ package mathijs.bos.garage_app.service_record;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mathijs.bos.garage_app.action.Action;
 import mathijs.bos.garage_app.base_classes.BaseEntity;
@@ -18,9 +19,18 @@ import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 @Entity
 @Table(name = "service_record")
 public class ServiceRecord extends BaseEntity {
+
+    public ServiceRecord(LocalDateTime inspection, LocalDateTime repair, Status status, Byte[] receipt, Currency totalCost) {
+        this.inspection = inspection;
+        this.repair = repair;
+        this.status = status;
+        this.receipt = receipt;
+        this.totalCost = totalCost;
+    }
 
     @Column(name = "inspection")
     private LocalDateTime inspection;

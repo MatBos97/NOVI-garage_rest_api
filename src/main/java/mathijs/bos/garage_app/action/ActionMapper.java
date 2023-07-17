@@ -2,8 +2,6 @@ package mathijs.bos.garage_app.action;
 
 import mathijs.bos.garage_app.base_classes.BaseMapper;
 
-import java.util.List;
-
 public class ActionMapper implements BaseMapper<Action, ActionDTO> {
 
 
@@ -19,17 +17,5 @@ public class ActionMapper implements BaseMapper<Action, ActionDTO> {
                 entity.getName(),
                 entity.getPrice()
         );
-    }
-
-    @Override
-    public List<Action> toEntity(List<ActionDTO> dtoList) {
-        return dtoList.stream()
-                .map(this::toEntity).toList();
-    }
-
-    @Override
-    public List<ActionDTO> toDto(List<Action> entityList) {
-        return entityList.stream()
-                .map(this::toDto).toList();
     }
 }

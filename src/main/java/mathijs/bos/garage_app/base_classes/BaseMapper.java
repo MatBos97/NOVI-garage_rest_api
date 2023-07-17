@@ -4,10 +4,16 @@ import java.util.List;
 
 public interface BaseMapper <E, D> {
 
-    public E toEntity(D dto);
-    public D toDto(E entity);
+    E toEntity(D dto);
+    D toDto(E entity);
 
-    public List<E> toEntity(List<D> dtoList);
-    public List<D> toDto(List<E> entityList);
+
+    default List<E> toEntity(List<D> dtoList){
+        return dtoList.stream().map(this::toEntity).toList();
+    }
+
+    default List<D> toDto(List<E> entityList){
+        return entityList.stream().map(this::toDto).toList();
+    }
 
 }

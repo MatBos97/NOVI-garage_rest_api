@@ -1,17 +1,16 @@
-package mathijs.bos.garage_app.action;
+package mathijs.bos.garage_app.customer;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Currency;
-
 @Getter
 @Setter
 @Builder
-public class ActionDTO {
+public class CustomerDTO {
 
     private Long id;
     private String name;
-    private Currency price;
+    private String phone;
+
 }
