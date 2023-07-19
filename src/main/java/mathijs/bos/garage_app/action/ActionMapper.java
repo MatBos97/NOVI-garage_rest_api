@@ -1,7 +1,9 @@
 package mathijs.bos.garage_app.action;
 
 import mathijs.bos.garage_app.base_classes.BaseMapper;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ActionMapper implements BaseMapper<Action, ActionDTO> {
 
 
@@ -13,7 +15,6 @@ public class ActionMapper implements BaseMapper<Action, ActionDTO> {
     @Override
     public ActionDTO toDto(Action entity) {
         return new ActionDTO(
-                entity.getId(),
                 entity.getName(),
                 entity.getPrice()
         );

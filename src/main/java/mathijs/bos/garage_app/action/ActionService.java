@@ -1,8 +1,6 @@
 package mathijs.bos.garage_app.action;
 
 import jakarta.persistence.EntityNotFoundException;
-import mathijs.bos.garage_app.base_classes.BaseMapper;
-import mathijs.bos.garage_app.base_classes.BaseRepository;
 import mathijs.bos.garage_app.base_classes.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class ActionService extends BaseService<Action, ActionDTO, Long> {
 
     @Autowired
-    public ActionService(BaseRepository<Action, Long> repository, BaseMapper<Action, ActionDTO> mapper) {
+    public ActionService(ActionRepository repository, ActionMapper mapper) {
         super(repository, mapper);
     }
 

@@ -1,5 +1,6 @@
 package mathijs.bos.garage_app.service_record;
 
+import jakarta.persistence.EntityNotFoundException;
 import mathijs.bos.garage_app.base_classes.BaseService;
 import mathijs.bos.garage_app.car.Car;
 import mathijs.bos.garage_app.customer.Customer;
@@ -11,13 +12,23 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-public class ServiceRecordService extends BaseService<ServiceRecord, Long, ServiceRecordRepository> {
+public class ServiceRecordService extends BaseService<ServiceRecord, ServiceRecordDTO, Long> {
 
     private final ServiceRecordRepository repository;
     @Autowired
-    public ServiceRecordService(ServiceRecordRepository repository) {
-        super(repository);
+    public ServiceRecordService(ServiceRecordRepository repository, ServiceRecordMapper mapper) {
+        super(repository, mapper);
         this.repository = repository;
+    }
+
+    @Override
+    public ServiceRecord create(ServiceRecordDTO dto) throws EntityNotFoundException {
+        return null;
+    }
+
+    @Override
+    public ServiceRecord update(Long aLong, ServiceRecordDTO dto) throws EntityNotFoundException {
+        return null;
     }
 
     public List<Customer> getCustomersWithCarsReadyForPickup(){
@@ -69,5 +80,6 @@ public class ServiceRecordService extends BaseService<ServiceRecord, Long, Servi
                     return repository.save(serviceRecord);
                 }).orElseThrow(() -> new ServiceRecordNotFoundException(id));
     }
+
 
 }

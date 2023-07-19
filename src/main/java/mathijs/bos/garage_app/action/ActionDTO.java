@@ -12,7 +12,6 @@ import java.util.Currency;
 @Builder
 public class ActionDTO extends BaseDTO {
 
-    private Long id;
     private String name;
     private Currency price;
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/part")
-public class PartController extends BaseController<Part, Long, PartService> {
+public class PartController extends BaseController<Part, PartDTO, Long> {
 
     @Autowired
     public PartController(PartService service) {

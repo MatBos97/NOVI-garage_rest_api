@@ -17,12 +17,11 @@ public class CarPapersMapper implements BaseMapper<CarPapers, CarPapersDTO> {
     @Override
     public CarPapersDTO toDto(CarPapers entity) {
         return new CarPapersDTO(
-                entity.getId(),
                 entity.getFileName(),
                 entity.getFileType(),
                 entity.getFileData(),
                 entity.getFileSize(),
-                entity.getId()
+                entity.getCar().getId()
         );
     }
 }

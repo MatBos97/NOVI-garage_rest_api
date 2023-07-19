@@ -2,32 +2,29 @@ package mathijs.bos.garage_app.issue;
 
 import jakarta.persistence.EntityNotFoundException;
 import mathijs.bos.garage_app.base_classes.BaseService;
-import mathijs.bos.garage_app.service_record.ServiceRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 @Service
-public class IssueService extends BaseService<Issue, Long, IssueRepository> {
+public class IssueService extends BaseService<Issue, IssueDTO, Long> {
 
     private final IssueRepository repository;
-    private final ServiceRecordRepository serviceRecordRepository;
 
     @Autowired
-    public IssueService(IssueRepository repository, ServiceRecordRepository serviceRecordRepository) {
-        super(repository);
+    public IssueService(IssueRepository repository, IssueMapper mapper) {
+        super(repository, mapper);
         this.repository = repository;
-        this.serviceRecordRepository = serviceRecordRepository;
+    }
+
+
+    @Override
+    public Issue create(IssueDTO dto) throws EntityNotFoundException {
+        return null;
     }
 
     @Override
-    public Issue create(Issue entity) {
-        return serviceRecordRepository.findById(entity.getServiceRecord().getId())
-                .map(serviceRecord -> {
-                    entity.setServiceRecord(serviceRecord);
-                    return super.create(entity);
-                }).orElseThrow(() -> new EntityNotFoundException("Could not find service record with id:" + entity.getServiceRecord().getId()));
+    public Issue update(Long aLong, IssueDTO dto) throws EntityNotFoundException {
+        return null;
     }
 
     public Issue agreeToFix(Long id) {
