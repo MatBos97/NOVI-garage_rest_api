@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import mathijs.bos.garage_app.base_classes.BaseDTO;
 
 import java.util.Currency;
 
@@ -11,10 +12,10 @@ import java.util.Currency;
 @Setter
 @Builder
 @AllArgsConstructor
-public class CustomActionDTO {
+public class CustomActionDTO extends BaseDTO {
 
-    private Long id;
     private String description;
     private Currency price;
+    private Long serviceRecordId;
 
 }

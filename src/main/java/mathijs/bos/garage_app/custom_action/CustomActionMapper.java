@@ -1,7 +1,9 @@
 package mathijs.bos.garage_app.custom_action;
 
 import mathijs.bos.garage_app.base_classes.BaseMapper;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CustomActionMapper implements BaseMapper<CustomAction, CustomActionDTO> {
     @Override
     public CustomAction toEntity(CustomActionDTO dto) {
@@ -15,9 +17,9 @@ public class CustomActionMapper implements BaseMapper<CustomAction, CustomAction
     @Override
     public CustomActionDTO toDto(CustomAction entity) {
         return new CustomActionDTO(
-                entity.getId(),
                 entity.getDescription(),
-                entity.getPrice()
+                entity.getPrice(),
+                entity.getServiceRecord().getId()
         );
     }
 }

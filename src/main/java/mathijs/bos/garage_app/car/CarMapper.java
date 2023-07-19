@@ -3,7 +3,9 @@ package mathijs.bos.garage_app.car;
 import mathijs.bos.garage_app.base_classes.BaseMapper;
 import mathijs.bos.garage_app.car_papers.CarPapers;
 import mathijs.bos.garage_app.service_record.ServiceRecord;
+import org.springframework.stereotype.Component;
 
+@Component
 public class CarMapper implements BaseMapper<Car, CarDTO> {
 
 
@@ -17,14 +19,9 @@ public class CarMapper implements BaseMapper<Car, CarDTO> {
     @Override
     public CarDTO toDto(Car entity) {
         return new CarDTO(
-                entity.getId(),
                 entity.getCustomer().getId(),
-                entity.getServiceRecords().stream()
-                        .map(ServiceRecord::getId)
-                        .toList(),
-                entity.getCarPapers().stream()
-                        .map(CarPapers::getId)
-                        .toList()
+                entity.getServiceRecords().stream().map(ServiceRecord::getId).toList(),
+                entity.getCarPapers().stream().map(CarPapers::getId).toList()
         );
     }
 }

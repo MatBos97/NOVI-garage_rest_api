@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/custom_action")
-public class CustomActionController extends BaseController<CustomAction, Long, CustomActionService> {
+public class CustomActionController extends BaseController<CustomAction, CustomActionDTO, Long> {
 
     @Autowired
     public CustomActionController(CustomActionService service) {

@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/service_record")
-public class ServiceRecordController extends BaseController<ServiceRecord, Long, ServiceRecordService> {
+public class ServiceRecordController extends BaseController<ServiceRecord, ServiceRecordDTO, Long> {
 
     private final ServiceRecordService service;
 

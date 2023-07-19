@@ -13,7 +13,6 @@ public class ActionMapper implements BaseMapper<Action, ActionDTO> {
     @Override
     public ActionDTO toDto(Action entity) {
         return new ActionDTO(
-                entity.getId(),
                 entity.getName(),
                 entity.getPrice()
         );

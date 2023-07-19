@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/issue")
-public class IssueController extends BaseController<Issue, Long, IssueService> {
+public class IssueController extends BaseController<Issue, IssueDTO, Long> {
 
     private final IssueService service;
 
