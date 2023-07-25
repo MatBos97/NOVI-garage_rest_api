@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CarService extends BaseService<Car, CarDTO, Long> {
@@ -30,7 +29,7 @@ public class CarService extends BaseService<Car, CarDTO, Long> {
             CustomerRepository customerRepository,
             ServiceRecordRepository serviceRecordRepository,
             CarPapersRepository carPapersRepository){
-        super(carRepository, carMapper);
+        super(carRepository);
         this.carRepository = carRepository;
         this.customerRepository = customerRepository;
         this.serviceRecordRepository = serviceRecordRepository;
@@ -40,6 +39,7 @@ public class CarService extends BaseService<Car, CarDTO, Long> {
 
     @Override
     public Car create(CarDTO dto) throws EntityNotFoundException {
+        dto.setId(null);
         Car car = carMapper.toEntity(dto);
 
         Customer customer = customerRepository.findById(dto.getCustomerId()).orElseThrow(EntityNotFoundException::new);
@@ -62,18 +62,18 @@ public class CarService extends BaseService<Car, CarDTO, Long> {
 
     @Override
     public Car update(Long id, CarDTO dto) throws EntityNotFoundException {
-        return carRepository.findById(id)
-                .map(car -> {
+        return carRepository.findById(id).map(
+                car -> {
                     car.setId(dto.getId());
                     car.setCustomer(customerRepository.findById(dto.getCustomerId()).orElseThrow(EntityNotFoundException::new));
-                    car.setServiceRecords(dto.getServiceRecordIdList().stream()
-                            .map(
-                                    serviceRecordId -> serviceRecordRepository.findById(serviceRecordId).orElseThrow(EntityNotFoundException::new))
-                            .toList());
-                    car.setCarPapers(dto.getCarPapersIdList().stream()
-                            .map(
-                                    carPapersId -> carPapersRepository.findById(carPapersId).orElseThrow(EntityNotFoundException::new)
-                            ).toList());
+
+                    car.setServiceRecords(dto.getServiceRecordIdList().stream().map(
+                            serviceRecordId -> serviceRecordRepository.findById(serviceRecordId).orElseThrow(EntityNotFoundException::new)
+                    ).toList());
+
+                    car.setCarPapers(dto.getCarPapersIdList().stream().map(
+                            carPapersId -> carPapersRepository.findById(carPapersId).orElseThrow(EntityNotFoundException::new)
+                    ).toList());
 
                     return carRepository.save(car);
                 }).orElseThrow(EntityNotFoundException::new);

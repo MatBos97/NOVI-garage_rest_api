@@ -2,36 +2,58 @@ package mathijs.bos.garage_app.issue;
 
 import jakarta.persistence.EntityNotFoundException;
 import mathijs.bos.garage_app.base_classes.BaseService;
+import mathijs.bos.garage_app.service_record.ServiceRecord;
+import mathijs.bos.garage_app.service_record.ServiceRecordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class IssueService extends BaseService<Issue, IssueDTO, Long> {
 
-    private final IssueRepository repository;
+    private final IssueRepository issueRepository;
+    private final IssueMapper issueMapper;
+    private final ServiceRecordRepository serviceRecordRepository;
 
     @Autowired
-    public IssueService(IssueRepository repository, IssueMapper mapper) {
-        super(repository, mapper);
-        this.repository = repository;
+    public IssueService(IssueRepository issueRepository, IssueMapper issueMapper, ServiceRecordRepository serviceRecordRepository) {
+        super(issueRepository);
+        this.issueRepository = issueRepository;
+        this.issueMapper = issueMapper;
+        this.serviceRecordRepository = serviceRecordRepository;
     }
-
 
     @Override
     public Issue create(IssueDTO dto) throws EntityNotFoundException {
-        return null;
+        dto.setId(null);
+        Issue issue = issueMapper.toEntity(dto);
+        ServiceRecord serviceRecord = serviceRecordRepository.findById(dto.getServiceRecordId()).orElseThrow(EntityNotFoundException::new);
+        issue.setServiceRecord(serviceRecord);
+
+        return issueRepository.save(issue);
     }
 
     @Override
-    public Issue update(Long aLong, IssueDTO dto) throws EntityNotFoundException {
-        return null;
+    public Issue update(Long id, IssueDTO dto) throws EntityNotFoundException {
+
+        ServiceRecord serviceRecord = serviceRecordRepository.findById(dto.getServiceRecordId()).orElseThrow(EntityNotFoundException::new);
+
+        return issueRepository.findById(id).map(
+                issue -> {
+                    issue.setId(dto.getId());
+                    issue.setFixAgreement(dto.getFixAgreement());
+                    issue.setDescription(dto.getDescription());
+                    issue.setServiceRecord(serviceRecord);
+
+                    return issueRepository.save(issue);
+                }
+        ).orElseThrow(EntityNotFoundException::new);
     }
 
     public Issue agreeToFix(Long id) {
-        return repository.findById(id)
+        return issueRepository.findById(id)
                 .map(issue -> {
                     issue.setFixAgreement(true);
-                    return repository.save(issue);
+                    return issueRepository.save(issue);
                 }).orElseThrow(() -> new IssueNotFoundException(id));
     }
 }

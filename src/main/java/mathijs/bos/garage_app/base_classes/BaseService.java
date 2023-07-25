@@ -10,12 +10,10 @@ import java.util.Optional;
 
 public abstract class BaseService<E, D extends BaseDTO, ID extends Serializable> {
 
-    protected final BaseRepository<E, ID> repository;
-    protected final BaseMapper<E, D> mapper;
+    private final BaseRepository<E, ID> repository;
 
-    public BaseService(BaseRepository<E, ID> repository, BaseMapper<E, D> mapper){
+    public BaseService(BaseRepository<E, ID> repository){
         this.repository = repository;
-        this.mapper = mapper;
     }
 
     public List<E> findAll(){

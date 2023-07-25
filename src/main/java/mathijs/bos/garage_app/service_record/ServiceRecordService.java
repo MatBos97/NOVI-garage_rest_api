@@ -1,10 +1,18 @@
 package mathijs.bos.garage_app.service_record;
 
 import jakarta.persistence.EntityNotFoundException;
+import mathijs.bos.garage_app.action.Action;
+import mathijs.bos.garage_app.action.ActionRepository;
 import mathijs.bos.garage_app.base_classes.BaseService;
 import mathijs.bos.garage_app.car.Car;
+import mathijs.bos.garage_app.car.CarRepository;
+import mathijs.bos.garage_app.custom_action.CustomAction;
+import mathijs.bos.garage_app.custom_action.CustomActionRepository;
 import mathijs.bos.garage_app.customer.Customer;
 import mathijs.bos.garage_app.issue.Issue;
+import mathijs.bos.garage_app.issue.IssueRepository;
+import mathijs.bos.garage_app.part.Part;
+import mathijs.bos.garage_app.part.PartRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,25 +22,71 @@ import java.util.List;
 @Service
 public class ServiceRecordService extends BaseService<ServiceRecord, ServiceRecordDTO, Long> {
 
-    private final ServiceRecordRepository repository;
+    private final ServiceRecordRepository serviceRecordRepository;
+    private final ServiceRecordMapper serviceRecordMapper;
+    private final CarRepository carRepository;
+    private final IssueRepository issueRepository;
+    private final ActionRepository actionRepository;
+    private final PartRepository partRepository;
+    private final CustomActionRepository customActionRepository;
+
     @Autowired
-    public ServiceRecordService(ServiceRecordRepository repository, ServiceRecordMapper mapper) {
-        super(repository, mapper);
-        this.repository = repository;
+    public ServiceRecordService(ServiceRecordRepository serviceRecordRepository, ServiceRecordMapper serviceRecordMapper, CarRepository carRepository, IssueRepository issueRepository, ActionRepository actionRepository, PartRepository partRepository, CustomActionRepository customActionRepository) {
+        super(serviceRecordRepository);
+        this.serviceRecordRepository = serviceRecordRepository;
+        this.serviceRecordMapper = serviceRecordMapper;
+        this.carRepository = carRepository;
+        this.issueRepository = issueRepository;
+        this.actionRepository = actionRepository;
+        this.partRepository = partRepository;
+        this.customActionRepository = customActionRepository;
     }
 
     @Override
     public ServiceRecord create(ServiceRecordDTO dto) throws EntityNotFoundException {
-        return null;
+        dto.setId(null);
+        ServiceRecord serviceRecord = serviceRecordMapper.toEntity(dto);
+        Car car = carRepository.findById(dto.getCarId()).orElseThrow(EntityNotFoundException::new);
+
+        List<Issue> issues = dto.getIssueIdList().stream().map(
+                id -> issueRepository.findById(id).orElseThrow(EntityNotFoundException::new)
+        ).toList();
+
+        List<Action> actions = dto.getActionIdList().stream().map(
+                id -> actionRepository.findById(id).orElseThrow(EntityNotFoundException::new)
+        ).toList();
+
+        List<Part> parts = dto.getPartIdList().stream().map(
+                id -> partRepository.findById(id).orElseThrow(EntityNotFoundException::new)
+        ).toList();
+
+        List<CustomAction> customActions = dto.getCustomActionIdList().stream().map(
+                id -> customActionRepository.findById(id).orElseThrow(EntityNotFoundException::new)
+        ).toList();
+
+        serviceRecord.setCar(car);
+        serviceRecord.setIssues(issues);
+        serviceRecord.setActions(actions);
+        serviceRecord.setParts(parts);
+        serviceRecord.setCustomActions(customActions);
+
+        return serviceRecordRepository.save(serviceRecord);
     }
 
     @Override
-    public ServiceRecord update(Long aLong, ServiceRecordDTO dto) throws EntityNotFoundException {
-        return null;
+    public ServiceRecord update(Long id, ServiceRecordDTO dto) throws EntityNotFoundException {
+        return serviceRecordRepository.findById(id).map(
+                serviceRecord -> {
+                    serviceRecord.setId(dto.getId());
+                    //todo: Finish setting all variables.
+
+                    return serviceRecordRepository.save(serviceRecord);
+                }
+        ).orElseThrow(EntityNotFoundException::new);
     }
 
     public List<Customer> getCustomersWithCarsReadyForPickup(){
-        List<Car> carsReadyForPickup = repository.findByStatus(Status.READY_FOR_PICK_UP).stream()
+        List<Car> carsReadyForPickup = serviceRecordRepository.findByStatus(Status.READY_FOR_PICK_UP).stream()
                 .map(ServiceRecord::getCar)
                 .toList();
 
@@ -42,14 +96,14 @@ public class ServiceRecordService extends BaseService<ServiceRecord, ServiceReco
     }
 
     public Customer getCustomerDetails(Long serviceRecordId) {
-        ServiceRecord serviceRecord = repository.findById(serviceRecordId)
+        ServiceRecord serviceRecord = serviceRecordRepository.findById(serviceRecordId)
                 .orElseThrow(() -> new ServiceRecordNotFoundException(serviceRecordId));
 
         return serviceRecord.getCar().getCustomer();
     }
 
     public List<Issue> getIssuesToFix(Long serviceRecordId){
-        ServiceRecord serviceRecord = repository.findById(serviceRecordId)
+        ServiceRecord serviceRecord = serviceRecordRepository.findById(serviceRecordId)
                 .orElseThrow(() -> new ServiceRecordNotFoundException(serviceRecordId));
 
         return serviceRecord.getIssues().stream()
@@ -58,26 +112,26 @@ public class ServiceRecordService extends BaseService<ServiceRecord, ServiceReco
     }
 
     public ServiceRecord planInspection(Long id, LocalDateTime dateTime) {
-        return repository.findById(id)
+        return serviceRecordRepository.findById(id)
                 .map(serviceRecord -> {
                     serviceRecord.setInspection(dateTime);
-                    return repository.save(serviceRecord);
+                    return serviceRecordRepository.save(serviceRecord);
                 }).orElseThrow(() -> new ServiceRecordNotFoundException(id));
     }
 
     public ServiceRecord planRepair(Long id, LocalDateTime dateTime) {
-        return repository.findById(id)
+        return serviceRecordRepository.findById(id)
                 .map(serviceRecord -> {
                     serviceRecord.setRepair(dateTime);
-                    return repository.save(serviceRecord);
+                    return serviceRecordRepository.save(serviceRecord);
                 }).orElseThrow(() -> new ServiceRecordNotFoundException(id));
     }
 
     public ServiceRecord changeStatus(Long id, Status status) {
-        return repository.findById(id)
+        return serviceRecordRepository.findById(id)
                 .map(serviceRecord -> {
                     serviceRecord.setStatus(status);
-                    return repository.save(serviceRecord);
+                    return serviceRecordRepository.save(serviceRecord);
                 }).orElseThrow(() -> new ServiceRecordNotFoundException(id));
     }
 

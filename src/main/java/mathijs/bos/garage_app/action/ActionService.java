@@ -9,19 +9,34 @@ import org.springframework.stereotype.Service;
 @Service
 public class ActionService extends BaseService<Action, ActionDTO, Long> {
 
+    private final ActionRepository actionRepository;
+    private final ActionMapper actionMapper;
+
     @Autowired
-    public ActionService(ActionRepository repository, ActionMapper mapper) {
-        super(repository, mapper);
+    public ActionService(ActionRepository actionRepository, ActionMapper actionMapper) {
+        super(actionRepository);
+        this.actionRepository = actionRepository;
+        this.actionMapper = actionMapper;
     }
 
     @Override
     public Action create(ActionDTO dto) throws EntityNotFoundException {
-        Action action = mapper.toEntity(dto);
-        return repository.save(action);
+        dto.setId(null);
+        Action action = actionMapper.toEntity(dto);
+
+        return actionRepository.save(action);
     }
 
     @Override
-    public Action update(Long aLong, ActionDTO dto) throws EntityNotFoundException {
-        return null;
+    public Action update(Long id, ActionDTO dto) throws EntityNotFoundException {
+        return actionRepository.findById(id).map(
+                action -> {
+                    action.setId(dto.getId());
+                    action.setName(dto.getName());
+                    action.setPrice(dto.getPrice());
+
+                    return actionRepository.save(action);
+                }
+        ).orElseThrow(EntityNotFoundException::new);
     }
 }
