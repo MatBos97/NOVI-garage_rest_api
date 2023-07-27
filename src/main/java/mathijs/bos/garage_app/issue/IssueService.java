@@ -23,21 +23,22 @@ public class IssueService extends BaseService<Issue, IssueDTO, Long> {
     }
 
     @Override
-    public Issue create(IssueDTO dto) throws EntityNotFoundException {
+    public IssueDTO create(IssueDTO dto) throws EntityNotFoundException {
         dto.setId(null);
         Issue issue = issueMapper.toEntity(dto);
         ServiceRecord serviceRecord = serviceRecordRepository.findById(dto.getServiceRecordId()).orElseThrow(EntityNotFoundException::new);
         issue.setServiceRecord(serviceRecord);
 
-        return issueRepository.save(issue);
+        Issue saved = issueRepository.save(issue);
+        return issueMapper.toDto(saved);
     }
 
     @Override
-    public Issue update(Long id, IssueDTO dto) throws EntityNotFoundException {
+    public IssueDTO update(Long id, IssueDTO dto) throws EntityNotFoundException {
 
         ServiceRecord serviceRecord = serviceRecordRepository.findById(dto.getServiceRecordId()).orElseThrow(EntityNotFoundException::new);
 
-        return issueRepository.findById(id).map(
+        Issue updated = issueRepository.findById(id).map(
                 issue -> {
                     issue.setId(dto.getId());
                     issue.setFixAgreement(dto.getFixAgreement());
@@ -47,6 +48,8 @@ public class IssueService extends BaseService<Issue, IssueDTO, Long> {
                     return issueRepository.save(issue);
                 }
         ).orElseThrow(EntityNotFoundException::new);
+
+        return issueMapper.toDto(updated);
     }
 
     public Issue agreeToFix(Long id) {

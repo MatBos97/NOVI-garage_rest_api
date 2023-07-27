@@ -38,7 +38,7 @@ public class CarService extends BaseService<Car, CarDTO, Long> {
     }
 
     @Override
-    public Car create(CarDTO dto) throws EntityNotFoundException {
+    public CarDTO create(CarDTO dto) throws EntityNotFoundException {
         dto.setId(null);
         Car car = carMapper.toEntity(dto);
 
@@ -56,13 +56,14 @@ public class CarService extends BaseService<Car, CarDTO, Long> {
 
         car.setCustomer(customer);
         car.setServiceRecords(serviceRecords);
+        car.setCarPapers(carPapers);
 
-        return car;
+        return carMapper.toDto(car);
     }
 
     @Override
-    public Car update(Long id, CarDTO dto) throws EntityNotFoundException {
-        return carRepository.findById(id).map(
+    public CarDTO update(Long id, CarDTO dto) throws EntityNotFoundException {
+        Car updated = carRepository.findById(id).map(
                 car -> {
                     car.setId(dto.getId());
                     car.setCustomer(customerRepository.findById(dto.getCustomerId()).orElseThrow(EntityNotFoundException::new));
@@ -77,5 +78,6 @@ public class CarService extends BaseService<Car, CarDTO, Long> {
 
                     return carRepository.save(car);
                 }).orElseThrow(EntityNotFoundException::new);
+        return carMapper.toDto(updated);
     }
 }

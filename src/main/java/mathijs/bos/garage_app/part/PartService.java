@@ -19,16 +19,17 @@ public class PartService extends BaseService<Part, PartDTO, Long> {
     }
 
     @Override
-    public Part create(PartDTO dto) throws EntityNotFoundException {
+    public PartDTO create(PartDTO dto) throws EntityNotFoundException {
         dto.setId(null);
         Part part = partMapper.toEntity(dto);
 
-        return partRepository.save(part);
+        Part saved = partRepository.save(part);
+        return partMapper.toDto(saved);
     }
 
     @Override
-    public Part update(Long id, PartDTO dto) throws EntityNotFoundException {
-        return partRepository.findById(id).map(
+    public PartDTO update(Long id, PartDTO dto) throws EntityNotFoundException {
+        Part updated = partRepository.findById(id).map(
                 part -> {
                     part.setId(dto.getId());
                     part.setName(dto.getName());
@@ -38,5 +39,6 @@ public class PartService extends BaseService<Part, PartDTO, Long> {
                     return partRepository.save(part);
                 }
         ).orElseThrow(EntityNotFoundException::new);
+        return partMapper.toDto(updated);
     }
 }

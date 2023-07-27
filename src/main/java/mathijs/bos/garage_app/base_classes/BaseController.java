@@ -16,33 +16,32 @@ public class BaseController<E, D extends BaseDTO, ID extends Serializable> {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<E>> findAll(){
-        List<E> all = service.findAll();
+    public ResponseEntity<List<D>> findAll(){
+        List<D> all = service.findAll();
         return ResponseEntity.ok(all);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<E> findById(@PathVariable ID id){
-        return service.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<D> findById(@PathVariable ID id){
+        D byId = service.findById(id);
+        return ResponseEntity.ok(byId);
     }
 
     @PostMapping
-    public ResponseEntity<E> create(@RequestBody D dto){
+    public ResponseEntity<D> create(@RequestBody D dto){
         try {
-            E entity = service.create(dto);
-            return ResponseEntity.ok(entity);
+            D d = service.create(dto);
+            return ResponseEntity.ok(d);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<E> update(@PathVariable ID id, @RequestBody D dto){
+    public ResponseEntity<D> update(@PathVariable ID id, @RequestBody D dto){
         try {
-            E updatedEntity = service.update(id, dto);
-            return ResponseEntity.ok(updatedEntity);
+            D updated = service.update(id, dto);
+            return ResponseEntity.ok(updated);
         } catch (EntityNotFoundException e) {
             return ResponseEntity.notFound().build();
         }

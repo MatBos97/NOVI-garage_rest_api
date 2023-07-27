@@ -26,7 +26,7 @@ public class CustomerService extends BaseService<Customer, CustomerDTO, Long> {
     }
 
     @Override
-    public Customer create(CustomerDTO dto) throws EntityNotFoundException {
+    public CustomerDTO create(CustomerDTO dto) throws EntityNotFoundException {
         dto.setId(null);
         Customer customer = customerMapper.toEntity(dto);
 
@@ -36,17 +36,19 @@ public class CustomerService extends BaseService<Customer, CustomerDTO, Long> {
 
         customer.setCars(cars);
 
-        return customerRepository.save(customer);
+        Customer saved = customerRepository.save(customer);
+
+        return customerMapper.toDto(saved);
     }
 
     @Override
-    public Customer update(Long id, CustomerDTO dto) throws EntityNotFoundException {
+    public CustomerDTO update(Long id, CustomerDTO dto) throws EntityNotFoundException {
 
         List<Car> cars = dto.getCarIdList().stream().map(
                 carId -> carRepository.findById(carId).orElseThrow(EntityNotFoundException::new)
         ).toList();
 
-        return customerRepository.findById(id).map(
+        Customer updated = customerRepository.findById(id).map(
                 customer -> {
                     customer.setId(dto.getId());
                     customer.setPhone(dto.getPhone());
@@ -56,5 +58,7 @@ public class CustomerService extends BaseService<Customer, CustomerDTO, Long> {
                     return customerRepository.save(customer);
                 }
         ).orElseThrow(EntityNotFoundException::new);
+
+        return customerMapper.toDto(updated);
     }
 }

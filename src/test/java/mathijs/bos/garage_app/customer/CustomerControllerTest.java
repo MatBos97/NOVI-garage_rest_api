@@ -87,11 +87,11 @@ class CustomerControllerTest {
     @Test
     public void CreateNewCustomer(){
         //Arrange
-        Customer customer = new Customer(1L, "John", "06123456789");
+        CustomerDTO customer = new CustomerDTO("Peter Pan", "123456789", null);
         when(serviceMock.create(customer)).thenReturn(customer);
 
         //Act
-        ResponseEntity<Customer> response = controller.create(customer);
+        ResponseEntity<CustomerDTO> response = controller.create(customer);
 
         //Assert
         assertNotNull(response);
@@ -100,7 +100,7 @@ class CustomerControllerTest {
         verify(serviceMock, times(1)).create(customer);
         verifyNoMoreInteractions(serviceMock);
     }
-
+//TODO: Fix this test
     @Test
     public void UpdateCustomer() throws IllegalAccessException {
         // Arrange

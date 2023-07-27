@@ -43,7 +43,7 @@ public class ServiceRecordService extends BaseService<ServiceRecord, ServiceReco
     }
 
     @Override
-    public ServiceRecord create(ServiceRecordDTO dto) throws EntityNotFoundException {
+    public ServiceRecordDTO create(ServiceRecordDTO dto) throws EntityNotFoundException {
         dto.setId(null);
         ServiceRecord serviceRecord = serviceRecordMapper.toEntity(dto);
         Car car = carRepository.findById(dto.getCarId()).orElseThrow(EntityNotFoundException::new);
@@ -70,19 +70,51 @@ public class ServiceRecordService extends BaseService<ServiceRecord, ServiceReco
         serviceRecord.setParts(parts);
         serviceRecord.setCustomActions(customActions);
 
-        return serviceRecordRepository.save(serviceRecord);
+        ServiceRecord saved = serviceRecordRepository.save(serviceRecord);
+
+        return serviceRecordMapper.toDto(saved);
     }
 
     @Override
-    public ServiceRecord update(Long id, ServiceRecordDTO dto) throws EntityNotFoundException {
-        return serviceRecordRepository.findById(id).map(
+    public ServiceRecordDTO update(Long id, ServiceRecordDTO dto) throws EntityNotFoundException {
+
+        Car car = carRepository.findById(dto.getCarId()).orElseThrow(EntityNotFoundException::new);
+
+        List<Part> parts = dto.getPartIdList().stream().map(
+                partId -> partRepository.findById(partId).orElseThrow(EntityNotFoundException::new)
+        ).toList();
+
+        List<Action> actions = dto.getActionIdList().stream().map(
+                actionId -> actionRepository.findById(actionId).orElseThrow(EntityNotFoundException::new)
+        ).toList();
+
+        List<CustomAction> customActions = dto.getCustomActionIdList().stream().map(
+                caId -> customActionRepository.findById(caId).orElseThrow(EntityNotFoundException::new)
+        ).toList();
+
+        List<Issue> issues = dto.getIssueIdList().stream().map(
+                issueId -> issueRepository.findById(issueId).orElseThrow(EntityNotFoundException::new)
+        ).toList();
+
+        ServiceRecord updated = serviceRecordRepository.findById(id).map(
                 serviceRecord -> {
                     serviceRecord.setId(dto.getId());
-                    //todo: Finish setting all variables.
+                    serviceRecord.setInspection(dto.getInspection());
+                    serviceRecord.setRepair(dto.getRepair());
+                    serviceRecord.setStatus(dto.getStatus());
+                    serviceRecord.setReceipt(dto.getReceipt());
+                    serviceRecord.setTotalCost(dto.getTotalCost());
+                    serviceRecord.setCar(car);
+                    serviceRecord.setParts(parts);
+                    serviceRecord.setActions(actions);
+                    serviceRecord.setCustomActions(customActions);
+                    serviceRecord.setIssues(issues);
 
                     return serviceRecordRepository.save(serviceRecord);
                 }
         ).orElseThrow(EntityNotFoundException::new);
+
+        return serviceRecordMapper.toDto(updated);
     }
 
     public List<Customer> getCustomersWithCarsReadyForPickup(){

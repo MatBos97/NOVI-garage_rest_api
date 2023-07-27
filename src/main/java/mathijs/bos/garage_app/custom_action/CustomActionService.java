@@ -23,21 +23,22 @@ public class CustomActionService extends BaseService<CustomAction, CustomActionD
     }
 
     @Override
-    public CustomAction create(CustomActionDTO dto) throws EntityNotFoundException {
+    public CustomActionDTO create(CustomActionDTO dto) throws EntityNotFoundException {
         dto.setId(null);
         CustomAction customAction = customActionMapper.toEntity(dto);
         ServiceRecord serviceRecord = serviceRecordRepository.findById(dto.getServiceRecordId()).orElseThrow(EntityNotFoundException::new);
         customAction.setServiceRecord(serviceRecord);
 
-        return customActionRepository.save(customAction);
+        CustomAction saved = customActionRepository.save(customAction);
+        return customActionMapper.toDto(saved);
     }
 
     @Override
-    public CustomAction update(Long id, CustomActionDTO dto) throws EntityNotFoundException {
+    public CustomActionDTO update(Long id, CustomActionDTO dto) throws EntityNotFoundException {
 
         ServiceRecord serviceRecord = serviceRecordRepository.findById(dto.getServiceRecordId()).orElseThrow(EntityNotFoundException::new);
 
-        return customActionRepository.findById(id).map(
+        CustomAction updated = customActionRepository.findById(id).map(
                 customAction -> {
                     customAction.setId(dto.getId());
                     customAction.setDescription(dto.getDescription());
@@ -47,5 +48,7 @@ public class CustomActionService extends BaseService<CustomAction, CustomActionD
                     return customActionRepository.save(customAction);
                 }
         ).orElseThrow(EntityNotFoundException::new);
+
+        return customActionMapper.toDto(updated);
     }
 }

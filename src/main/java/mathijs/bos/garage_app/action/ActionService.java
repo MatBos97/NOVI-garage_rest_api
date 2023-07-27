@@ -14,22 +14,23 @@ public class ActionService extends BaseService<Action, ActionDTO, Long> {
 
     @Autowired
     public ActionService(ActionRepository actionRepository, ActionMapper actionMapper) {
-        super(actionRepository);
+        super(actionRepository, actionMapper);
         this.actionRepository = actionRepository;
         this.actionMapper = actionMapper;
     }
 
     @Override
-    public Action create(ActionDTO dto) throws EntityNotFoundException {
+    public ActionDTO create(ActionDTO dto) throws EntityNotFoundException {
         dto.setId(null);
         Action action = actionMapper.toEntity(dto);
 
-        return actionRepository.save(action);
+        Action saved = actionRepository.save(action);
+        return actionMapper.toDto(saved);
     }
 
     @Override
-    public Action update(Long id, ActionDTO dto) throws EntityNotFoundException {
-        return actionRepository.findById(id).map(
+    public ActionDTO update(Long id, ActionDTO dto) throws EntityNotFoundException {
+        Action updated = actionRepository.findById(id).map(
                 action -> {
                     action.setId(dto.getId());
                     action.setName(dto.getName());
@@ -38,5 +39,7 @@ public class ActionService extends BaseService<Action, ActionDTO, Long> {
                     return actionRepository.save(action);
                 }
         ).orElseThrow(EntityNotFoundException::new);
+
+        return actionMapper.toDto(updated);
     }
 }
