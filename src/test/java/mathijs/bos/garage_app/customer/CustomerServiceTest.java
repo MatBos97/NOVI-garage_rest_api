@@ -1,6 +1,7 @@
 package mathijs.bos.garage_app.customer;
 
 import jakarta.persistence.EntityNotFoundException;
+import mathijs.bos.garage_app.car.CarRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,82 +19,98 @@ import static org.mockito.Mockito.*;
 class CustomerServiceTest {
 
     @Mock
-    private CustomerRepository repository;
+    private CustomerRepository customerRepository;
+
+    @Mock
+    private CustomerMapper customerMapper;
+
+    @Mock
+    private CarRepository carRepository;
 
     @InjectMocks
     private CustomerService service;
 
     private Customer customer;
+    private CustomerDTO customerDTO;
 
     @BeforeEach
     void setUp() {
-        service = new CustomerService(repository);
-        customer = new Customer(1L, "A", "123");
+        service = new CustomerService(customerRepository, customerMapper, carRepository);
+        customer = new Customer(1L, "A", "123456789");
+        customerDTO = new CustomerDTO("A", "123456789", null);
     }
 
 
     @Test
     public void FindAllCustomers(){
         //Arrange
-        List<Customer> entities = new ArrayList<>();
-        entities.add(new Customer(1L, "a", "123"));
-        entities.add(new Customer(2L, "b", "456"));
-        entities.add(new Customer(3L, "c", "789"));
-        when(repository.findAll()).thenReturn(entities);
+        List<Customer> customerList = List.of(
+                new Customer(1L, "A", "123456789"),
+                new Customer(1L, "A", "123456789")
+        );
+        List<CustomerDTO> customerDTOList = List.of(
+                new CustomerDTO("A", "123456789", null),
+                new CustomerDTO("A", "123456789", null)
+        );
+        when(customerRepository.findAll()).thenReturn(customerList);
+        when(customerMapper.toDto(customerList)).thenReturn(customerDTOList);
 
         //Act
-        List<Customer> all = service.findAll();
+        List<CustomerDTO> actual = service.findAll();
 
         //Assert
-        assertEquals(all, entities);
+        assertEquals(customerDTOList, actual);
+        assertEquals(customerDTOList.size(), actual.size());
     }
 
     @Test
     public void FindById(){
         //Arrange
         Long id = 1L;
-        when(repository.findById(id)).thenReturn(Optional.of(customer));
+        when(customerRepository.findById(id)).thenReturn(Optional.of(customer));
+        when(customerMapper.toDto(customer)).thenReturn(customerDTO);
 
         //Act
-        Optional<Customer> optionalCustomer = service.findById(id);
+        CustomerDTO foundCustomer = service.findById(id);
 
         //Assert
-        assertTrue(optionalCustomer.isPresent());
-        assertEquals(customer, optionalCustomer.get());
-        verify(repository, times(1)).findById(id);
+        assertEquals(customerDTO, foundCustomer);
+        verify(customerRepository, times(1)).findById(id);
     }
 
     @Test
     public void CannotFindById(){
         //Arrange
-        when(service.findById(anyLong())).thenReturn(Optional.empty());
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
+        when(customerMapper.toDto(customer)).thenReturn(customerDTO);
 
-        //Act
-        Optional<Customer> optional = service.findById(1L);
-
-        //Assert
-        assertTrue(optional.isEmpty());
-        verify(repository, times(1)).findById(1L);
+        //Act & Assert
+        assertThrows(EntityNotFoundException.class, ()-> service.findById(1L));
     }
 
     @Test
     public void CreateCustomer(){
         //Arrange
-        when(repository.save(customer)).thenReturn(customer);
+        when(customerMapper.toEntity(customerDTO)).thenReturn(customer);
+        when(carRepository.findById(anyLong())).thenReturn(null);
+        when(customerRepository.save(customer)).thenReturn(customer);
+        when(customerMapper.toDto(customer)).thenReturn(customerDTO);
 
         //Act
-        Customer response = service.create(customer);
+        CustomerDTO response = service.create(customerDTO);
 
         //Assert
-        assertEquals(customer, response);
+        assertEquals(customerDTO, response);
     }
+
+    //TODO: fix these tests
 
     @Test
     public void UpdateCustomer() throws IllegalAccessException {
         // Arrange
         Customer newCustomer = new Customer(1L, "A", "321");
-        when(repository.findById(1L)).thenReturn(Optional.of(customer));
-        when(repository.save(customer)).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+        when(customerRepository.save(customer)).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
 
         // Act
         Customer updatedCustomer = service.update(1L, newCustomer);
@@ -104,31 +120,31 @@ class CustomerServiceTest {
         assertEquals(customer.getId(), newCustomer.getId());
         assertEquals(customer.getName(), newCustomer.getName());
         assertEquals(customer.getPhone(), newCustomer.getPhone());
-        verify(repository, times(1)).findById(1L);
-        verify(repository, times(1)).save(customer);
+        verify(customerRepository, times(1)).findById(1L);
+        verify(customerRepository, times(1)).save(customer);
     }
 
     @Test
     public void DeleteCustomer(){
         //Arrange
-        when(repository.findById(1L)).thenReturn(Optional.of(customer));
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
 
         //Act
         service.delete(1L);
 
         //Assert
-        verify(repository, times(1)).delete(customer);
-        verify(repository, times(1)).findById(customer.getId());
+        verify(customerRepository, times(1)).delete(customer);
+        verify(customerRepository, times(1)).findById(customer.getId());
     }
 
     @Test
     public void DeleteUnknownCustomer(){
         //Arrange
-        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+        when(customerRepository.findById(anyLong())).thenReturn(Optional.empty());
 
         //Act and Assert
         assertThrows(EntityNotFoundException.class, () -> service.delete(1L));
-        verify(repository, times(1)).findById(1L);
-        verify(repository, never()).delete(any());
+        verify(customerRepository, times(1)).findById(1L);
+        verify(customerRepository, never()).delete(any());
     }
 }

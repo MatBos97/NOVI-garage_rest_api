@@ -29,7 +29,7 @@ public class CarService extends BaseService<Car, CarDTO, Long> {
             CustomerRepository customerRepository,
             ServiceRecordRepository serviceRecordRepository,
             CarPapersRepository carPapersRepository){
-        super(carRepository);
+        super(carRepository, carMapper);
         this.carRepository = carRepository;
         this.customerRepository = customerRepository;
         this.serviceRecordRepository = serviceRecordRepository;

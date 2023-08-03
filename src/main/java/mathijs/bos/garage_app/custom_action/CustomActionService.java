@@ -16,7 +16,7 @@ public class CustomActionService extends BaseService<CustomAction, CustomActionD
 
     @Autowired
     public CustomActionService(CustomActionRepository customActionRepository, CustomActionMapper customActionMapper, ServiceRecordRepository serviceRecordRepository) {
-        super(customActionRepository);
+        super(customActionRepository, customActionMapper);
         this.customActionRepository = customActionRepository;
         this.customActionMapper = customActionMapper;
         this.serviceRecordRepository = serviceRecordRepository;

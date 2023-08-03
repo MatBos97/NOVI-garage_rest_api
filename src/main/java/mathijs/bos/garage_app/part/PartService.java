@@ -13,7 +13,7 @@ public class PartService extends BaseService<Part, PartDTO, Long> {
 
     @Autowired
     public PartService(PartRepository partRepository, PartMapper partMapper) {
-        super(partRepository);
+        super(partRepository, partMapper);
         this.partRepository = partRepository;
         this.partMapper = partMapper;
     }

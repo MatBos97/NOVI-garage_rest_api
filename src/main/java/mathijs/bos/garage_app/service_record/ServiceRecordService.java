@@ -32,7 +32,7 @@ public class ServiceRecordService extends BaseService<ServiceRecord, ServiceReco
 
     @Autowired
     public ServiceRecordService(ServiceRecordRepository serviceRecordRepository, ServiceRecordMapper serviceRecordMapper, CarRepository carRepository, IssueRepository issueRepository, ActionRepository actionRepository, PartRepository partRepository, CustomActionRepository customActionRepository) {
-        super(serviceRecordRepository);
+        super(serviceRecordRepository, serviceRecordMapper);
         this.serviceRecordRepository = serviceRecordRepository;
         this.serviceRecordMapper = serviceRecordMapper;
         this.carRepository = carRepository;

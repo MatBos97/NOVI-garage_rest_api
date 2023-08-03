@@ -16,7 +16,7 @@ public class IssueService extends BaseService<Issue, IssueDTO, Long> {
 
     @Autowired
     public IssueService(IssueRepository issueRepository, IssueMapper issueMapper, ServiceRecordRepository serviceRecordRepository) {
-        super(issueRepository);
+        super(issueRepository, issueMapper);
         this.issueRepository = issueRepository;
         this.issueMapper = issueMapper;
         this.serviceRecordRepository = serviceRecordRepository;

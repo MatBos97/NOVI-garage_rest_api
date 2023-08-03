@@ -19,7 +19,7 @@ public class CustomerService extends BaseService<Customer, CustomerDTO, Long> {
 
     @Autowired
     public CustomerService(CustomerRepository customerRepository, CustomerMapper customerMapper, CarRepository carRepository) {
-        super(customerRepository);
+        super(customerRepository, customerMapper);
         this.customerRepository = customerRepository;
         this.customerMapper = customerMapper;
         this.carRepository = carRepository;

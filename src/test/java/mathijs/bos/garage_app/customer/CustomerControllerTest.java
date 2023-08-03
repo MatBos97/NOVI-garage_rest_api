@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,27 +24,28 @@ class CustomerControllerTest {
     @InjectMocks
     private CustomerController controller;
 
-    private Customer customer;
+    private CustomerDTO customer;
 
 
     @BeforeEach
     void setUp() {
         controller = new CustomerController(serviceMock);
-        this.customer = new Customer(1L, "A", "123");
+        this.customer = new CustomerDTO("A", "123", null);
+        this.customer.setId(1L);
     }
 
 
     @Test
     public void FindAllCustomers(){
         //Arrange
-        List<Customer> entities = new ArrayList<>();
-        entities.add(new Customer(1L, "John", "1234"));
-        entities.add(new Customer(2L, "Bart", "5678"));
-        entities.add(new Customer(3L, "Jane", "9101"));
+        List<CustomerDTO> entities = new ArrayList<>();
+        entities.add(new CustomerDTO("Alex", "1234", null));
+        entities.add(new CustomerDTO("Jo", "5678", null));
+        entities.add(new CustomerDTO("Jane", "9101", null));
         when(serviceMock.findAll()).thenReturn(entities);
 
         //Act
-        ResponseEntity<List<Customer>> response = controller.findAll();
+        ResponseEntity<List<CustomerDTO>> response = controller.findAll();
 
         //Assert
         assertNotNull(response);
@@ -58,11 +58,11 @@ class CustomerControllerTest {
     @Test
     public void FindById(){
         //Arrange
-        Customer customer = new Customer(1L, "A", "1234567890");
-        when(serviceMock.findById(1L)).thenReturn(Optional.of(customer));
+        CustomerDTO findById = new CustomerDTO("A", "1234567890", null);
+        when(serviceMock.findById(anyLong())).thenReturn(findById);
 
         //Act
-        ResponseEntity<Customer> response = controller.findById(1L);
+        ResponseEntity<CustomerDTO> response = controller.findById(1L);
 
         //Assert
         assertNotNull(response);
@@ -75,7 +75,7 @@ class CustomerControllerTest {
     @Test
     public void NotFoundById(){
         //Arrange
-        when(serviceMock.findById(anyLong())).thenReturn(Optional.empty());
+        when(serviceMock.findById(anyLong())).thenReturn(null);
 
         //Act
         ResponseEntity<?> response = controller.findById(1L);
@@ -104,11 +104,11 @@ class CustomerControllerTest {
     @Test
     public void UpdateCustomer() throws IllegalAccessException {
         // Arrange
-        Customer newCustomer = new Customer(1L, "B", "321");
-        when(serviceMock.update(anyLong(), any(Customer.class))).thenReturn(newCustomer);
+        CustomerDTO newCustomer = new CustomerDTO("A", "06123456789", null);
+        when(serviceMock.update(anyLong(), any(CustomerDTO.class))).thenReturn(newCustomer);
 
         // Act
-        ResponseEntity<Customer> response = controller.update(customer.getId(), customer);
+        ResponseEntity<CustomerDTO> response = controller.update(customer.getId(), customer);
 
         // Assert
         assertEquals(newCustomer, response.getBody());
@@ -118,11 +118,11 @@ class CustomerControllerTest {
     @Test
     public void UpdateNonExistingCustomer() throws IllegalAccessException {
         //  Arrange
-        Customer newCustomer = new Customer(1L, "B", "321");
-        when(serviceMock.update(anyLong(), any(Customer.class))).thenThrow(IllegalAccessException.class);
+        CustomerDTO newCustomer = new CustomerDTO("B", "321", null);
+        when(serviceMock.update(anyLong(), any(CustomerDTO.class))).thenThrow(IllegalAccessException.class);
 
         // Act
-        ResponseEntity<Customer> response = controller.update(1L, newCustomer);
+        ResponseEntity<CustomerDTO> response = controller.update(1L, newCustomer);
 
         assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
