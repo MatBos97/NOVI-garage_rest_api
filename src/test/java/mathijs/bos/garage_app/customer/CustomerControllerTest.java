@@ -100,7 +100,7 @@ class CustomerControllerTest {
         verify(serviceMock, times(1)).create(customer);
         verifyNoMoreInteractions(serviceMock);
     }
-//TODO: Fix this test
+
     @Test
     public void UpdateCustomer() throws IllegalAccessException {
         // Arrange

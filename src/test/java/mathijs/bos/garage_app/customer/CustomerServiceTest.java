@@ -103,17 +103,15 @@ class CustomerServiceTest {
         assertEquals(customerDTO, response);
     }
 
-    //TODO: fix these tests
-
     @Test
     public void UpdateCustomer() throws IllegalAccessException {
         // Arrange
-        Customer newCustomer = new Customer(1L, "A", "321");
+        CustomerDTO newCustomer = new CustomerDTO("A", "321", null);
         when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
-        when(customerRepository.save(customer)).thenAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
+        when(customerRepository.save(customer)).thenReturn(customer);
 
         // Act
-        Customer updatedCustomer = service.update(1L, newCustomer);
+        CustomerDTO updatedCustomer = service.update(1L, newCustomer);
 
         // Assert
         assertNotNull(updatedCustomer);
